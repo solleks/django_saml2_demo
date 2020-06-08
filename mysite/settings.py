@@ -191,8 +191,7 @@ SAML_CONFIG = {
               # present in our metadata
 
               # the keys of this dictionary are entity ids
-              # https://app.onelogin.com/saml/metadata/1671a9b1-a436-46b4-a88c-d546bf29b263
-              'https://localhost/simplesaml/saml2/idp/metadata.php': {
+              'https://app.onelogin.com/saml/metadata/1671a9b1-a436-46b4-a88c-d546bf29b263': {
                   'single_sign_on_service': {
                       saml2.BINDING_HTTP_REDIRECT: 'https://abundant-dev.onelogin.com/trust/saml2/http-post/sso/1671a9b1-a436-46b4-a88c-d546bf29b263',
                       },
