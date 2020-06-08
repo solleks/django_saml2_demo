@@ -191,12 +191,13 @@ SAML_CONFIG = {
               # present in our metadata
 
               # the keys of this dictionary are entity ids
+              # https://app.onelogin.com/saml/metadata/1671a9b1-a436-46b4-a88c-d546bf29b263
               'https://localhost/simplesaml/saml2/idp/metadata.php': {
                   'single_sign_on_service': {
-                      saml2.BINDING_HTTP_REDIRECT: 'https://localhost/simplesaml/saml2/idp/SSOService.php',
+                      saml2.BINDING_HTTP_REDIRECT: 'https://abundant-dev.onelogin.com/trust/saml2/http-post/sso/1671a9b1-a436-46b4-a88c-d546bf29b263',
                       },
                   'single_logout_service': {
-                      saml2.BINDING_HTTP_REDIRECT: 'https://localhost/simplesaml/saml2/idp/SingleLogoutService.php',
+                      saml2.BINDING_HTTP_REDIRECT: 'https://abundant-dev.onelogin.com/trust/saml2/http-redirect/slo/1161957',
                       },
                   },
               },
@@ -205,7 +206,10 @@ SAML_CONFIG = {
 
   # where the remote metadata is stored
   'metadata': {
-      'local': [os.path.join(BASE_DIR, 'remote_metadata.xml')],
+      'remote': [{
+          'url': 'https://app.onelogin.com/saml/metadata/1671a9b1-a436-46b4-a88c-d546bf29b263',
+          'cert': os.path.join(BASE_DIR, 'onelogin.cert'),
+          }]
       },
 
   # set to 1 to output debugging information
@@ -213,12 +217,12 @@ SAML_CONFIG = {
 
   # Signing
   'key_file': os.path.join(BASE_DIR, 'keys/mycert.key'),  # private part
-  'cert_file': os.path.join(BASE_DIR, 'keys/mycert.pem'),  # public part
+  'cert_file': os.path.join(BASE_DIR, 'keys/mycert.cert'),  # public part
 
   # Encryption
   'encryption_keypairs': [{
       'key_file': os.path.join(BASE_DIR, 'keys/my_encryption_key.key'),  # private part
-      'cert_file': os.path.join(BASE_DIR, 'keys/my_encryption_cert.pem'),  # public part
+      'cert_file': os.path.join(BASE_DIR, 'keys/my_encryption_key.cert'),  # public part
   }],
 
   # own metadata settings
@@ -246,9 +250,9 @@ SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
 SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 SAML_CREATE_UNKNOWN_USER = False
 SAML_ATTRIBUTE_MAPPING = {
-    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress': ('email', ),
-    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname': ('first_name', ),
-    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname': ('last_name', ),
+    'User.email': ('email', ),
+    'User.FirstName': ('first_name', ),
+    'User.LastName': ('last_name', ),
 }
 
 SESSION_COOKIE_SAMESITE=None
