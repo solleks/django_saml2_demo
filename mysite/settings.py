@@ -154,6 +154,7 @@ SAML_CONFIG = {
       'sp' : {
           'name': 'Federated Django sample SP',
           'name_id_format': saml2.saml.NAMEID_FORMAT_EMAILADDRESS,
+          'allow_unsolicited' : True,
           'endpoints': {
               # url and binding to the assertion consumer service view
               # do not change the binding or service name
