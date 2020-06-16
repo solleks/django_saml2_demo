@@ -5,34 +5,43 @@ import saml2.saml
 
 from saml.models import SAMLConfiguration
 
+
+# This config loader works with one Azure AD and one OneLogin application
+# with the following SAMLConfiguration db models:
+#
+# Project: microsoft
+# Entity id: https://login.microsoftonline.com/c0b91d10-3235-4bb7-9d95-4225d0b76405/federationmetadata/2007-06/federationmetadata.xml?appid=1cf0fd7e-84c6-48b3-acfc-acfc702cb1f3
+#
+# Project: onelogin
+# Entity id: https://app.onelogin.com/saml/metadata/1671a9b1-a436-46b4-a88c-d546bf29b263
+#
+# They match users charlie.garrett@gmail.com and cdgarrett@maryalicegarrett.com
+# respectively.
+
 def LoadSamlConfig(request):
     print('Load SAML config for request:', request)
 
     project_name = None
     project_re = re.compile('^/polls/\?project=(\w+)$')
     if request.method == 'GET':
-        print('GET args:', request.GET.dict)
+        # print('GET args:', request.GET.dict)
         if 'next' in request.GET:
             next_arg = request.GET['next']
             project_match = re.match(project_re, next_arg)
             if project_match:
                 project_name = project_match.group(1)
     elif request.method == 'POST':
-        print('POST args:', request.POST.dict)
+        # print('POST args:', request.POST.dict)
         if 'RelayState' in request.POST:
             relay_arg = request.POST['RelayState']
             project_match = re.match(project_re, relay_arg)
             if project_match:
                 project_name = project_match.group(1)
 
-    print('project_name = ', project_name)
-
     try:
         saml_db_obj = SAMLConfiguration.objects.get(project=project_name)
     except SAMLConfiguration.DoesNotExist:
         saml_db_obj = None
-
-    print('OneLogin config:', saml_db_obj)
 
     if saml_db_obj is None:
         return None

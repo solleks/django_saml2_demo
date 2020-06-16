@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'djangosaml2',
-    'saml',
     'sslserver',
+    'saml',
 ]
 
 MIDDLEWARE = [
@@ -139,7 +139,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 SAML_CONFIG_LOADER = 'saml.config_loader.LoadSamlConfig'
 
-# TODO(Charlie): Make the following work with multiple providers
 SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
 SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 SAML_CREATE_UNKNOWN_USER = False
@@ -147,6 +146,9 @@ SAML_ATTRIBUTE_MAPPING = {
     'User.email': ('email', ),
     'User.FirstName': ('first_name', ),
     'User.LastName': ('last_name', ),
+    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress': ('email', ),
+    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname': ('first_name', ),
+    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname': ('last_name', ),
 }
 
 SESSION_COOKIE_SAMESITE=None
