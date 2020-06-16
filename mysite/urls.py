@@ -17,10 +17,13 @@ from django.contrib import admin
 from django.urls import include, path
 import djangosaml2
 
+from . import views
+
 urlpatterns = [
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('saml2/', include('djangosaml2.urls')),
     path('test/', djangosaml2.views.echo_attributes),
+    path('login/', views.LoginView.as_view(), name='saml_login'),
 ]

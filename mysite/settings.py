@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'djangosaml2',
+    'saml',
     'sslserver',
 ]
 
@@ -136,116 +137,9 @@ LOGIN_URL = '/saml2/login/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-import saml2
-import saml2.saml
-SAML_CONFIG = {
-  # full path to the xmlsec1 binary programm
-  'xmlsec_binary': '/usr/local/bin/xmlsec1',
+SAML_CONFIG_LOADER = 'saml.config_loader.LoadSamlConfig'
 
-  # your entity id, usually your subdomain plus the url to the metadata view
-  'entityid': 'https://localhost:8080/saml2/metadata/',
-
-  # directory with attribute mapping
-  'attribute_map_dir': os.path.join(BASE_DIR, 'attributemaps'),
-
-  # this block states what services we provide
-  'service': {
-      # we are just a lonely SP
-      'sp' : {
-          'name': 'Federated Django sample SP',
-          'name_id_format': saml2.saml.NAMEID_FORMAT_EMAILADDRESS,
-          'allow_unsolicited' : True,
-          'endpoints': {
-              # url and binding to the assertion consumer service view
-              # do not change the binding or service name
-              'assertion_consumer_service': [
-                  ('https://localhost:8080/saml2/acs/',
-                   saml2.BINDING_HTTP_POST),
-                  ],
-              # url and binding to the single logout service view
-              # do not change the binding or service name
-              'single_logout_service': [
-                  ('https://localhost:8080/saml2/ls/',
-                   saml2.BINDING_HTTP_REDIRECT),
-                  ('https://localhost:8080/saml2/ls/post',
-                   saml2.BINDING_HTTP_POST),
-                  ],
-              },
-           # Mandates that the identity provider MUST authenticate the
-           # presenter directly rather than rely on a previous security context.
-          'force_authn': False,
-
-           # Enable AllowCreate in NameIDPolicy.
-          'name_id_format_allow_create': False,
-
-           # attributes that this project need to identify a user
-          'required_attributes': ['uid'],
-
-           # attributes that may be useful to have but not required
-          'optional_attributes': ['eduPersonAffiliation'],
-
-          # in this section the list of IdPs we talk to are defined
-          # This is not mandatory! All the IdP available in the metadata will be considered.
-          'idp': {
-              # we do not need a WAYF service since there is
-              # only an IdP defined here. This IdP should be
-              # present in our metadata
-
-              # the keys of this dictionary are entity ids
-              'https://app.onelogin.com/saml/metadata/1671a9b1-a436-46b4-a88c-d546bf29b263': {
-                  'single_sign_on_service': {
-                      saml2.BINDING_HTTP_REDIRECT: 'https://abundant-dev.onelogin.com/trust/saml2/http-post/sso/1671a9b1-a436-46b4-a88c-d546bf29b263',
-                      },
-                  'single_logout_service': {
-                      saml2.BINDING_HTTP_REDIRECT: 'https://abundant-dev.onelogin.com/trust/saml2/http-redirect/slo/1161957',
-                      },
-                  },
-              },
-          },
-      },
-
-  # where the remote metadata is stored
-  'metadata': {
-      'remote': [{
-          'url': 'https://app.onelogin.com/saml/metadata/1671a9b1-a436-46b4-a88c-d546bf29b263',
-          'cert': os.path.join(BASE_DIR, 'onelogin.cert'),
-          }]
-      },
-
-  # set to 1 to output debugging information
-  'debug': 1,
-
-  # Signing
-  'key_file': os.path.join(BASE_DIR, 'keys/mycert.key'),  # private part
-  'cert_file': os.path.join(BASE_DIR, 'keys/mycert.cert'),  # public part
-
-  # Encryption
-  'encryption_keypairs': [{
-      'key_file': os.path.join(BASE_DIR, 'keys/my_encryption_key.key'),  # private part
-      'cert_file': os.path.join(BASE_DIR, 'keys/my_encryption_key.cert'),  # public part
-  }],
-
-  # own metadata settings
-  'contact_person': [
-      {'given_name': 'Charlie',
-       'sur_name': 'Garrett',
-       'company': 'None',
-       'email_address': 'charlie.garrett@gmail.com',
-       'contact_type': 'technical'},
-      ],
-  # you can set multilanguage information here
-  'organization': {
-      'name': [('Me', 'en')],
-      'display_name': [('Charlie', 'en')],
-      'url': [('https://localhost:8080', 'en')],
-      },
-  'valid_for': 24,  # how long is our metadata valid
-
-  # Library does not know about attributes for microsoft claims
-  'allow_unknown_attributes': True
-  # TODO(Charlie): Probably have to change attribute mappings.
-}
-
+# TODO(Charlie): Make the following work with multiple providers
 SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
 SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 SAML_CREATE_UNKNOWN_USER = False
